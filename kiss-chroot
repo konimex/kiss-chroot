@@ -2,8 +2,45 @@
 #
 # kiss-chroot - Create a KISS chroot.
 
+die() {
+    printf '\033[31m!>\033[m %s.\n' "$@" >&2
+    exit 1
+}
+
 main() {
-    :
+    export KISS_ROOT=${1:-~/kiss-chroot}
+    export KISS_PATH=$KISS_ROOT/root/packages/repo
+    export XDG_CACHE_HOME=$KISS_ROOT/root/.cache
+
+    for pkg in wget tar; do
+        type "$pkg" >/dev/null || die "$pkg is required"
+    done
+
+    [ -d "$KISS_ROOT" ] &&
+        die "$KISS_ROOT already exists. Delete it to recreate it."
+
+    mkdir -p "$KISS_ROOT/bin" \
+             "$KISS_ROOT/root" \
+             "$XDG_CACHE_HOME"
+
+    cd "$KISS_ROOT/bin" ||
+        die "Couldn't cd to $KISS_ROOT/bin"
+
+    wget -q "https://raw.githubusercontent.com/kissx/kiss/master/kiss" ||
+        die "Couldn't download kiss"
+
+    chmod +x kiss
+
+    cd "$KISS_ROOT/root" ||
+        die "Couldn't cd to $KISS_ROOT/root"
+
+    wget -q "https://github.com/kissx/packages/archive/master.tar.gz"
+
+    tar xf master.tar.gz
+    mv packages-master packages
+
+    # TODO: Install all base packages.
+    "$KISS_ROOT/bin/kiss" i zlib
 }
 
 main "$@"
