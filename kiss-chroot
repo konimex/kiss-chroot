@@ -1,0 +1,9 @@
+#!/bin/sh
+#
+# kiss-chroot - Create a KISS chroot.
+
+main() {
+    :
+}
+
+main "$@"
