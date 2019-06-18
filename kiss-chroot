@@ -20,7 +20,7 @@ main() {
     [ -d "$KISS_ROOT" ] &&
         die "$KISS_ROOT already exists. Delete it to recreate it."
 
-    mkdir -p "$KISS_ROOT/bin" \
+    mkdir -p "$KISS_ROOT/usr/bin" \
              "$KISS_ROOT/root" \
              "$XDG_CACHE_HOME"
 
@@ -44,7 +44,7 @@ main() {
     mv packages-master packages
 
     # TODO: Install all base packages.
-    for pkg in zlib libressl; do
+    for pkg in baselayout zlib libressl; do
         "$KISS_ROOT/bin/kiss" i "$pkg"
     done
 }
